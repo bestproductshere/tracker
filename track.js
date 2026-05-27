@@ -34,7 +34,7 @@
     disclaimer
   } = settings;
 
-  // Optimized Send Event (IP lookup removed, keepalive added for instant reliability)
+  // Base function to transmit data to your webhook
   function sendEvent(event, extra = {}) {
     if (!webhook_url) return;
 
@@ -49,12 +49,19 @@
         timestamp: Date.now(),
         ...extra
       }),
-      keepalive: true // Allows the request to finish transferring after the page changes
+      keepalive: true 
     }).catch(err => console.warn("Webhook background transfer failed:", err));
   }
 
-  // 1. Log the immediate page view
-  sendEvent("page_view");
+  // --- THE LOGIC SWITCH ---
+  let redirected = false;
+
+  // Hold the page_view back for 400ms. If a redirect happens before then, it gets canceled!
+  const pageViewTimeout = setTimeout(() => {
+    if (!redirected) {
+      sendEvent("page_view");
+    }
+  }, 400); 
 
   // Modify HTML content if elements exist
   const update = (selector, text) => {
@@ -68,11 +75,18 @@
 
   const btn = document.querySelector(".btn");
   if (btn) {
-    btn.addEventListener("click", () => sendEvent("button_click"));
+    btn.addEventListener("click", () => {
+      // If they manually click the button, send button click, cancel the standard page view
+      clearTimeout(pageViewTimeout);
+      sendEvent("button_click");
+    });
   }
 
-  // 2. Queue success event and redirect instantly without waiting
+  // Handle the automatic redirect
   setTimeout(() => {
+    redirected = true;
+    clearTimeout(pageViewTimeout); // Cancels the page_view request completely
+    
     sendEvent("redirect_success");
     window.location.href = redirect_url;
   }, redirect_delay * 1000);

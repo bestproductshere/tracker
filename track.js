@@ -15,7 +15,7 @@
     try {
       const res = await fetch("https://bestproductshere.github.io/tracker/settings.js");
       const text = await res.text();
-      eval(text); // This defines `window.TRACKER_SETTINGS`
+      eval(text); // Defines `window.TRACKER_SETTINGS`
       if (typeof window.TRACKER_SETTINGS !== "object") throw new Error("Invalid settings.js");
       return { ...DEFAULT_SETTINGS, ...window.TRACKER_SETTINGS };
     } catch (err) {
@@ -34,7 +34,6 @@
     disclaimer
   } = settings;
 
-  // Base function to transmit data to your webhook
   function sendEvent(event, extra = {}) {
     if (!webhook_url) return;
 
@@ -53,15 +52,9 @@
     }).catch(err => console.warn("Webhook background transfer failed:", err));
   }
 
-  // --- THE LOGIC SWITCH ---
-  let redirected = false;
-
-  // Hold the page_view back for 400ms. If a redirect happens before then, it gets canceled!
-  const pageViewTimeout = setTimeout(() => {
-    if (!redirected) {
-      sendEvent("page_view");
-    }
-  }, 400); 
+  // 1. FIRE PAGE VIEW IMMEDIATELY 
+  // This ensures you know they landed on your GitHub page, even if they exit quickly.
+  sendEvent("page_view");
 
   // Modify HTML content if elements exist
   const update = (selector, text) => {
@@ -73,20 +66,16 @@
   update(".btn", button_text);
   update(".disclaimer", disclaimer);
 
+  // Track manual clicks
   const btn = document.querySelector(".btn");
   if (btn) {
     btn.addEventListener("click", () => {
-      // If they manually click the button, send button click, cancel the standard page view
-      clearTimeout(pageViewTimeout);
       sendEvent("button_click");
     });
   }
 
-  // Handle the automatic redirect
+  // 2. HANDLE AUTOMATIC REDIRECT
   setTimeout(() => {
-    redirected = true;
-    clearTimeout(pageViewTimeout); // Cancels the page_view request completely
-    
     sendEvent("redirect_success");
     window.location.href = redirect_url;
   }, redirect_delay * 1000);

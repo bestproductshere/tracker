@@ -15,7 +15,7 @@
     try {
       const res = await fetch("https://bestproductshere.github.io/tracker/settings.js");
       const text = await res.text();
-      eval(text); // This should define `window.TRACKER_SETTINGS`
+      eval(text); // This defines `window.TRACKER_SETTINGS`
       if (typeof window.TRACKER_SETTINGS !== "object") throw new Error("Invalid settings.js");
       return { ...DEFAULT_SETTINGS, ...window.TRACKER_SETTINGS };
     } catch (err) {
@@ -34,31 +34,29 @@
     disclaimer
   } = settings;
 
-  // Send visitor data
+  // Optimized Send Event (IP lookup removed, keepalive added for instant reliability)
   function sendEvent(event, extra = {}) {
     if (!webhook_url) return;
-    fetch("https://ipapi.co/json/")
-      .then(res => res.json())
-      .then(location => {
-        fetch(webhook_url, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            event,
-            username,
-            pageId,
-            page_url: window.location.href, // ✅ Adds the full GitHub Page URL
-            location,
-            timestamp: Date.now(),
-            ...extra
-          })
-        });
-      });
+
+    fetch(webhook_url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        event,
+        username,
+        pageId,
+        page_url: window.location.href, 
+        timestamp: Date.now(),
+        ...extra
+      }),
+      keepalive: true // Allows the request to finish transferring after the page changes
+    }).catch(err => console.warn("Webhook background transfer failed:", err));
   }
 
+  // 1. Log the immediate page view
   sendEvent("page_view");
 
-  // Modify content if it's a full HTML page (optional - for your custom pages)
+  // Modify HTML content if elements exist
   const update = (selector, text) => {
     const el = document.querySelector(selector);
     if (el) el.innerText = text;
@@ -73,7 +71,7 @@
     btn.addEventListener("click", () => sendEvent("button_click"));
   }
 
-  // Redirect after delay
+  // 2. Queue success event and redirect instantly without waiting
   setTimeout(() => {
     sendEvent("redirect_success");
     window.location.href = redirect_url;

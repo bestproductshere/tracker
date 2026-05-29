@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opening Amazon App...</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f7;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #FF9900; /* Amazon Orange */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .btn {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 24px;
+            background-color: #FF9900;
+            color: #111;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="loader"></div>
+    <h2>Opening the Amazon App...</h2>
+    <p>Please click "Continue" or "Open" if your browser prompts you.</p>
+    
+    <a id="app-link" href="com.amazon.mobile.shopping://www.amazon.com" class="btn">Open Amazon App</a>
+
+    <script>
+        (function() {
+            // The custom URL scheme that forces the browser to ask to open the Amazon App
+            var amazonAppUrl = "com.amazon.mobile.shopping://www.amazon.com";
+            var webFallbackUrl = "https://www.amazon.com";
+
+            // Attempt to trigger the browser's native app prompt immediately on load
+            window.location.href = amazonAppUrl;
+
+            // Fallback safety: If the user stays on this page (meaning they don't have the app, 
+            // or they clicked 'Cancel'), redirect them to the regular Amazon website after 2.5 seconds.
+            setTimeout(function() {
+                // Check if the user is still looking at this page
+                if (!document.hidden) {
+                    window.location.href = webFallbackUrl;
+                }
+            }, 2500);
+        })();
+    </script>
+</body>
+</html>

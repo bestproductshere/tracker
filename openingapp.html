@@ -42,7 +42,7 @@
         .btn:active {
             transform: scale(0.98);
         }
-        /* iOS Specific Card Styling */
+        /* iOS Instruction Banner */
         #ios-instructions {
             display: none;
             background: #fff9e6;
@@ -92,11 +92,11 @@
 <body>
 
 <div class="container">
-    <h1 id="heading">Taking you to Amazon...</h1>
+    <h1 id="heading">Connecting to Amazon...</h1>
     
-    <!-- Visual Steps Card (Shows ONLY for iPhone users) -->
+    <!-- iOS UI Instruction Assistant Card -->
     <div id="ios-instructions">
-        <h3 style="margin: 0 0 15px 0; font-size: 16px; color: #e65100; font-weight: 700;">📲 iPhone User? Open the App Instantly:</h3>
+        <h3 style="margin: 0 0 15px 0; font-size: 16px; color: #e65100; font-weight: 700;">📲 iPhone User? Open App Instantly:</h3>
         <div class="step">
             <div class="step-number">1</div>
             <div class="step-text">Tap the <strong>three dots (•••)</strong> in the top-right corner of your screen.</div>
@@ -107,47 +107,56 @@
         </div>
     </div>
 
-    <!-- The Action Button (Handles Android Intent & Fallbacks) -->
+    <!-- Interactive Call to Action Button -->
     <a href="#" class="btn" id="amazon-link">View Product on Amazon</a>
     
-    <!-- Required Legal Affiliate Disclaimer -->
-    <p class="disclaimer">As an Amazon Associate, I earn from qualifying purchases. Commission may be earned from links below at no extra cost to you.</p>
+    <p class="disclaimer">As an Amazon Associate, I earn from qualifying purchases. Commissions may be earned from links below at zero extra expense to you.</p>
 </div>
 
 <script>
-  // Global Destination URL - Put your exact raw Affiliate URL here
+  // Your base tracking target link
   const amazonWebUrl = "https://www.amazon.com?&linkCode=ll2&tag=pt-bestproductshere1-20&linkId=3bcd422606574bb395be81fc13540080&language=en_US&ref_=as_li_ss_tl";
 
   const btn = document.getElementById("amazon-link");
   const iosAlert = document.getElementById("ios-instructions");
   const heading = document.getElementById("heading");
 
-  // Device Sniffing Logic
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
   const isAndroid = /Android/i.test(userAgent);
   const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
 
-  // Dynamic Page Presentation Layout Based on Operating System
   if (isIOS) {
-    // Show the step-by-step 3-dot helper card to iPhone users
+    // Show iPhone layout instructions to prevent Apple tracking strips
     iosAlert.style.display = "block";
     heading.innerText = "Action Required Below:";
     btn.innerText = "Continue to Amazon Web View";
     btn.href = amazonWebUrl; 
-    // No preventDefault on iOS so they can still browse in-app if they choose not to hit the 3 dots.
   } else if (isAndroid) {
-    // Android config
     btn.innerText = "Open Amazon Shopping App";
     
     btn.addEventListener("click", (e) => {
       e.preventDefault();
-      // Execute System-Level package launch (Preserves 100% Tracking parameters)
+      
+      // Auto-resolve package variants (.com vs .in) depending on your target link destination
+      let packageName = "com.amazon.mShop.android.shopping"; 
+      if (amazonWebUrl.includes("amazon.in")) {
+        packageName = "in.amazon.mShop.android.shopping";
+      }
+
       const rawUrlWithoutHttps = amazonWebUrl.replace("https://", "");
-      const androidIntent = `intent://${rawUrlWithoutHttps}#Intent;scheme=https;package=com.amazon.mShop.android.shopping;end;`;
+      
+      // The browser_fallback_url safety route halts Google Play crash triggers across international borders
+      const androidIntent = `intent://${rawUrlWithoutHttps}#Intent;scheme=https;package=${packageName};S.browser_fallback_url=${encodeURIComponent(amazonWebUrl)};end;`;
+      
       window.location.href = androidIntent;
+
+      // Local browser fail-safe script container fallback loop
+      setTimeout(() => {
+          window.location.href = amazonWebUrl;
+      }, 1000);
     });
   } else {
-    // Desktop layout optimization fallback
+    // Basic desktop display execution rules
     btn.innerText = "Go to Amazon Site";
     btn.href = amazonWebUrl;
   }

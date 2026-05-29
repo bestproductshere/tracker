@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>App Launcher</title>
+    <title>Redirecting...</title>
     <style>
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
@@ -14,55 +14,61 @@
         }
         .container { 
             max-width: 430px; 
-            margin: 40px auto 0 auto; 
+            margin: 50px auto 0 auto; 
             background: white; 
-            padding: 30px 24px; 
+            padding: 35px 24px; 
             border-radius: 20px; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.08); 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.06); 
         }
-        .app-icon {
-            width: 70px;
-            height: 70px;
-            background: #ff9900;
-            border-radius: 18px;
-            margin: 0 auto 20px auto;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 20px rgba(255, 153, 0, 0.2);
+        .loader {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #ff9900;
+            border-radius: 50%;
+            margin: 0 auto 24px auto;
+            animation: spin 1s linear infinite;
         }
-        .app-icon svg {
-            width: 40px;
-            height: 40px;
-            fill: #111;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         h1 { 
             font-size: 22px; 
-            font-weight: 700;
-            color: #111; 
-            margin-bottom: 8px; 
+            font-weight: 700; 
+            margin-bottom: 12px; 
         }
-        .subtitle {
-            font-size: 14px;
+        .status-text {
+            font-size: 15px;
             color: #666;
-            margin-bottom: 28px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
         .btn { 
             display: block; 
-            background-color: #ff9900; 
-            color: #111; 
-            font-weight: 700; 
-            padding: 16px 24px; 
+            padding: 15px 20px; 
             text-decoration: none; 
             border-radius: 12px; 
-            box-shadow: 0 5px 15px rgba(255, 153, 0, 0.35); 
-            font-size: 16px; 
-            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 15px;
             transition: all 0.15s ease;
         }
+        .btn-primary {
+            background-color: #ff9900; 
+            color: #111;
+            box-shadow: 0 4px 12px rgba(255, 153, 0, 0.3);
+        }
+        .btn-secondary {
+            background-color: #f0f2f5;
+            color: #4b5563;
+        }
         .btn:active {
-            transform: scale(0.97);
-            background-color: #e68a00;
+            transform: scale(0.98);
         }
         #ios-instructions {
             display: none;
@@ -73,81 +79,52 @@
             margin-bottom: 24px;
             text-align: left;
         }
-        .step {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .step:last-child {
-            margin-bottom: 0;
-        }
+        .step { display: flex; align-items: center; margin-bottom: 10px; }
+        .step:last-child { margin-bottom: 0; }
         .step-number {
-            background: #ffb74d;
-            color: #fff;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 12px;
-            margin-right: 10px;
-            flex-shrink: 0;
+            background: #ffb74d; color: #fff; border-radius: 50%;
+            width: 22px; height: 22px; display: flex; align-items: center;
+            justify-content: center; font-weight: bold; font-size: 12px; margin-right: 10px; flex-shrink: 0;
         }
-        .step-text {
-            font-size: 13px;
-            color: #5d4037;
-            line-height: 1.4;
-        }
+        .step-text { font-size: 13px; color: #5d4037; line-height: 1.4; }
         .disclaimer { 
-            font-size: 11px; 
-            color: #999; 
-            line-height: 1.5;
-            margin-top: 24px;
-            border-top: 1px solid #eeeeee;
-            padding-top: 16px;
+            font-size: 11px; color: #999; line-height: 1.5; margin-top: 30px;
+            border-top: 1px solid #eeeeee; padding-top: 16px;
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="app-icon">
-        <!-- SVG Shopping Cart Icon -->
-        <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
-    </div>
-
-    <h1 id="heading">Open in Amazon App</h1>
-    <p class="subtitle" id="sub-heading">Redirecting you to the product listing...</p>
+    <div class="loader" id="page-loader"></div>
+    <h1 id="heading">Connecting to Amazon...</h1>
+    <p class="status-text" id="status-msg">Detecting your device and opening the app layout automatically...</p>
     
-    <!-- iOS Layout -->
+    <!-- iOS Rescue Layout (Kept for iPhone architecture parity) -->
     <div id="ios-instructions">
         <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #e65100; font-weight: 700;">📲 iPhone Instantly Open App:</h3>
-        <div class="step">
-            <div class="step-number">1</div>
-            <div class="step-text">Tap the <strong>three dots (•••)</strong> at the top right.</div>
-        </div>
-        <div class="step">
-            <div class="step-number">2</div>
-            <div class="step-text">Select <strong>"Open in System Browser"</strong> (or Safari).</div>
-        </div>
+        <div class="step"><div class="step-number">1</div><div class="step-text">Tap the <strong>three dots (•••)</strong> at the top right.</div></div>
+        <div class="step"><div class="step-number">2</div><div class="step-text">Select <strong>"Open in System Browser"</strong> (or Safari).</div></div>
     </div>
 
-    <!-- Main Explicit Action Button -->
-    <a href="#" class="btn" id="amazon-link">Open App</a>
+    <!-- On-screen Backup Layout Strategy -->
+    <div class="button-group">
+        <a href="#" class="btn btn-primary" id="app-btn">Open in App</a>
+        <a href="#" class="btn btn-secondary" id="browser-btn">Open in Browser</a>
+    </div>
     
     <p class="disclaimer">As an Amazon Associate, I earn from qualifying purchases. Commissions may be earned at zero extra expense to you.</p>
 </div>
 
 <script>
-  // Global settings
   const baseAmazonUrl = "https://www.amazon.com?&linkCode=ll2&tag=kymedia00-20&linkId=3bcd422606574bb395be81fc13540080&language=en_US&ref_=as_li_ss_tl";
   
-  const btn = document.getElementById("amazon-link");
+  const appBtn = document.getElementById("app-btn");
+  const browserBtn = document.getElementById("browser-btn");
   const iosAlert = document.getElementById("ios-instructions");
   const heading = document.getElementById("heading");
-  const subHeading = document.getElementById("sub-heading");
+  const statusMsg = document.getElementById("status-msg");
+  const loader = document.getElementById("page-loader");
 
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
   const isAndroid = /Android/i.test(userAgent);
@@ -155,85 +132,79 @@
 
   let targetUrl = baseAmazonUrl;
   let explicitPackage = "com.amazon.mShop.android.shopping"; 
-  let currentCountry = "US";
+  let intentTriggerUrl = "";
 
-  // Check if trapped inside social media ecosystem
   const isInAppBrowser = /FBAN|FBAV|Instagram|Threads|Twitter|MQQBrowser|LinkedIn|Pinterest|Snapchat|WhatsApp|Telegram/i.test(userAgent) || (userAgent.includes('WebView') || userAgent.includes('Version/'));
 
-  // 1. RUNTIME GEOLOCATION DETECTOR
+  // 1. DYNAMIC GEOLOCATION LOOKUP
   fetch('https://ipapi.co/json/')
     .then(res => res.json())
     .then(data => {
-      currentCountry = data.country_code;
-      if (currentCountry === 'IN') {
+      if (data.country_code === 'IN') {
         targetUrl = "https://www.amazon.in?tag=kymedia00-21"; 
         explicitPackage = "in.amazon.mShop.android.shopping"; 
       }
-      initializeRouter();
+      runAppRouter();
     })
     .catch(() => {
-      initializeRouter(); // Fallback to global variables if API stalls
+      runAppRouter(); // Fallback to global constants if API errors out
     });
 
-  function initializeRouter() {
-    // IOS HANDLING ROUTE
+  function runAppRouter() {
+    const cleanUrl = targetUrl.replace("https://", "");
+    intentTriggerUrl = `intent://${cleanUrl}#Intent;scheme=https;package=${explicitPackage};S.browser_fallback_url=${encodeURIComponent(targetUrl)};end;`;
+
+    // Map the interface button targets
+    browserBtn.href = targetUrl;
+
+    // --- CASE A: iOS (APPLE) ROUTINE ---
     if (isIOS) {
       if (isInAppBrowser) {
+        loader.style.display = "none";
         iosAlert.style.display = "block";
         heading.innerText = "Action Required";
-        subHeading.innerText = "Social networks block direct app linking on iOS.";
-        btn.innerText = "Follow steps above to open";
-        btn.style.opacity = "0.6";
-        btn.style.pointerEvents = "none"; // Lock the button inside Instagram jail
+        statusMsg.innerText = "Please open in your system browser to access the Amazon application.";
+        appBtn.innerText = "Tap Menu Above Instead";
+        appBtn.style.opacity = "0.5";
+        appBtn.style.pointerEvents = "none";
       } else {
-        // Safe in native Safari -> Let Apple Universal Links handle it on click
-        btn.href = targetUrl;
-        btn.innerText = "Continue to Amazon App";
-        // Attempt a one-time safe click-less kick inside Safari
+        // Safely in Safari, fire link execution instantly
         window.location.href = targetUrl;
       }
-    } 
-    
-    // ANDROID HANDLING ROUTE (Matches the LinkTwin Pop-up Logic)
-    else if (isAndroid) {
-      btn.innerText = "Open App";
-      
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
-        
-        const cleanUrl = targetUrl.replace("https://", "");
-        
-        if (isInAppBrowser) {
-          // STEP A: If they are inside Instagram, clicking "Open App" kicks them to Chrome
-          const currentUrlString = window.location.href;
-          const cleanHubUrl = currentUrlString.replace("https://", "");
-          
-          // Force launch Google Chrome with this exact page running inside it
-          const chromeIntent = `intent://${cleanHubUrl}${currentUrlString.includes('?') ? '&' : '?'}escaped=true#Intent;scheme=https;package=com.android.chrome;end;`;
-          window.location.href = chromeIntent;
-        } else {
-          // STEP B: They are now safely inside Chrome! Clicking the button opens the real app package
-          const explicitAppIntent = `intent://${cleanUrl}#Intent;scheme=https;package=${explicitPackage};S.browser_fallback_url=${encodeURIComponent(targetUrl)};end;`;
-          window.location.href = explicitAppIntent;
+      return;
+    }
 
-          // STEP C: Cross-Country Fallback Router (The second pop-up behavior you noticed)
-          // If the app intent execution completely fails because of package mismatch or missing app:
-          setTimeout(() => {
-              if (currentCountry === 'IN' && targetUrl.includes('amazon.in')) {
-                  // User is in India, but system failed to process the Indian app package. 
-                  // Alert them clearly, then dump safely to standard chrome browser window.
-                  alert("Redirecting to Amazon India web storefront...");
-              }
-              window.location.href = targetUrl;
-          }, 1400);
-        }
+    // --- CASE B: ANDROID ROUTINE (The exact flow you requested) ---
+    if (isAndroid) {
+      // 1. Instantly trigger the app launch. This forces Android's native "Open App / Cancel" pop-up.
+      window.location.href = intentTriggerUrl;
+      
+      statusMsg.innerText = "Checking device for the Amazon Shopping App...";
+
+      // 2. Configure the explicit manual click handlers if they hit "Cancel" or get stuck
+      appBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        window.location.href = intentTriggerUrl;
       });
+
+      // 3. THE 3-SECOND AUTO FALLBACK TIMER
+      // If the user does nothing or hits cancel, drop them right onto the mobile web view inside Instagram
+      setTimeout(() => {
+          statusMsg.innerText = "Loading storefront securely...";
+          // Check if the window hasn't already hidden/minimized to launch the app
+          if (!document.hidden) {
+              window.location.href = targetUrl;
+          }
+      }, 3000); // 3-second delay execution window
     } 
     
-    // DESKTOP / OTHER FALLBACK
+    // Desktop layout
     else {
-      btn.innerText = "Go to Amazon Store";
-      btn.href = targetUrl;
+      loader.style.display = "none";
+      heading.innerText = "Shop via Amazon";
+      statusMsg.innerText = "Taking you directly to the storefront platform.";
+      appBtn.href = targetUrl;
+      window.location.href = targetUrl;
     }
   }
 </script>

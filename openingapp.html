@@ -109,11 +109,11 @@
     <!-- Main Button -->
     <a href="#" class="btn" id="amazon-link">Open Amazon Shopping App</a>
     
-    <p class="disclaimer">As an Amazon Associate, I earn from qualifying purchases. Commissions may be earned from links below at zero extra expense to you.</p>
+    <p class="disclaimer">As Aan Amazon Associate, I earn from qualifying purchases. Commissions may be earned from links below at zero extra expense to you.</p>
 </div>
 
 <script>
-  // Your base tracking link configured with OneLink
+  // Global base Amazon tracking configurations
   const baseAmazonUrl = "https://www.amazon.com?&linkCode=ll2&tag=kymedia00-20&linkId=3bcd422606574bb395be81fc13540080&language=en_US&ref_=as_li_ss_tl";
 
   const btn = document.getElementById("amazon-link");
@@ -124,20 +124,41 @@
   const isAndroid = /Android/i.test(userAgent);
   const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
 
-  // Run an instant IP-check to rewrite the URL for India BEFORE the user clicks
   let targetUrl = baseAmazonUrl;
-  
+
+  // Global Sandbox Escape Routine for Android
+  if (isAndroid) {
+    // Detects any common in-app webview container footprint (Instagram, FB, Threads, Telegram, etc.)
+    const isInAppBrowser = /FBAN|FBAV|Instagram|Threads|Twitter|MQQBrowser|LinkedIn|Pinterest|Snapchat|WhatsApp|Telegram/i.test(userAgent) || (userAgent.includes('WebView') || userAgent.includes('Version/'));
+    
+    // Check an escape marker parameter to prevent infinite loop loops
+    const urlParams = new URLSearchParams(window.location.search);
+    const alreadyEscaped = urlParams.get('escaped') === 'true';
+
+    if (isInAppBrowser && !alreadyEscaped) {
+      // Re-compile current GitHub address context with a dynamic query tag
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set('escaped', 'true');
+      const cleanHubUrl = currentUrl.toString().replace("https://", "");
+      
+      // Force Android system default browser shell mapping allocation
+      const escapeIntent = `intent://${cleanHubUrl}#Intent;scheme=https;package=com.android.chrome;end;`;
+      window.location.href = escapeIntent;
+    }
+  }
+
+  // Geolocation Resolution Thread execution
   fetch('https://ipapi.co/json/')
     .then(res => res.json())
     .then(data => {
       if (data.country_code === 'IN') {
-        // Automatically swap to an Amazon India link format if the user is in India
+        // REMINDER: Replace this placeholder link with your exact Indian product detail page listing URL
         targetUrl = "https://www.amazon.in?tag=kymedia00-21"; 
       }
       setupButton();
     })
     .catch(() => {
-      setupButton(); // Fallback to standard tracking URL if API is blocked
+      setupButton(); // Execute fallback rules seamlessly if geo API throttles
     });
 
   function setupButton() {
@@ -152,20 +173,17 @@
       btn.addEventListener("click", (e) => {
         e.preventDefault();
         
-        // Clean the scheme for Intent construction
         const cleanUrl = targetUrl.replace("https://", "");
         
-        // FUTURE-PROOF PACKAGE-FREE INTENT:
-        // We drop the package boundary specification. Android will scan the device for 
-        // ANY app registered to own the URL domain structure automatically.
+        // Comprehensive package-free domain router execution format
         const universalIntent = `intent://${cleanUrl}#Intent;scheme=https;S.browser_fallback_url=${encodeURIComponent(targetUrl)};end;`;
         
         window.location.href = universalIntent;
 
-        // Failsafe timer: forces browser window fallback if no app handles it
+        // Failsafe execution frame callback sequence
         setTimeout(() => {
             window.location.href = targetUrl;
-        }, 1000);
+        }, 1200);
       });
     } else {
       btn.innerText = "Go to Amazon Site";

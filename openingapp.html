@@ -125,19 +125,18 @@
   let targetUrl = baseAmazonUrl;
   let explicitPackage = "com.amazon.mShop.android.shopping"; // Default global package string
 
-  // 1. DYNAMIC AUTO-ESCAPE FOR ANDROID IN-APP BROWSERS
+  // 1. IMMEDIATE AUTO-ESCAPE FOR ANDROID IN-APP BROWSERS
   if (isAndroid) {
     const isInAppBrowser = /FBAN|FBAV|Instagram|Threads|Twitter|MQQBrowser|LinkedIn|Pinterest|Snapchat|WhatsApp|Telegram/i.test(userAgent) || (userAgent.includes('WebView') || userAgent.includes('Version/'));
     const urlParams = new URLSearchParams(window.location.search);
     const alreadyEscaped = urlParams.get('escaped') === 'true';
 
-    // If locked inside an in-app browser environment, force break-out into native Chrome immediately
+    // Break out of the social sandbox into clean, native Chrome immediately on load
     if (isInAppBrowser && !alreadyEscaped) {
       const currentUrl = new URL(window.location.href);
       currentUrl.searchParams.set('escaped', 'true');
       const cleanHubUrl = currentUrl.toString().replace("https://", "");
       
-      // Target Chrome to bypass social media webview wrappers
       const escapeIntent = `intent://${cleanHubUrl}#Intent;scheme=https;package=com.android.chrome;end;`;
       window.location.href = escapeIntent;
     }
@@ -148,14 +147,14 @@
     .then(res => res.json())
     .then(data => {
       if (data.country_code === 'IN') {
-        // Update to your direct Amazon India localized product listing URL here
+        // Update to your direct Amazon India localized product link here
         targetUrl = "https://www.amazon.in?tag=kymedia00-21"; 
-        explicitPackage = "in.amazon.mShop.android.shopping"; // Swap to Indian package explicitly
+        explicitPackage = "in.amazon.mShop.android.shopping"; // Explicit Indian App ID
       }
       setupButton();
     })
     .catch(() => {
-      setupButton(); // Execute standard initialization rules if Geo API fails
+      setupButton(); // Fallback to global variables if Geo API fails
     });
 
   function setupButton() {
@@ -172,12 +171,12 @@
         
         const cleanUrl = targetUrl.replace("https://", "");
         
-        // Formulate strict explicit intent routing matching your target countries
+        // Strict explicit package routing 
         const explicitIntent = `intent://${cleanUrl}#Intent;scheme=https;package=${explicitPackage};S.browser_fallback_url=${encodeURIComponent(targetUrl)};end;`;
         
         window.location.href = explicitIntent;
 
-        // Failsafe backup mechanism: forces browser load if app package execution fails
+        // Failsafe backup mechanism: If package isn't on the phone, stay in Chrome and load the web store
         setTimeout(() => {
             window.location.href = targetUrl;
         }, 1200);

@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
+    <title>Opening App...</title>
+    
+    <div id="meta-container"></div>
+
     <style>
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
@@ -14,19 +17,19 @@
         }
         .container { 
             max-width: 430px; 
-            margin: 50px auto 0 auto; 
+            margin: 60px auto 0 auto; 
             background: white; 
             padding: 35px 24px; 
             border-radius: 20px; 
             box-shadow: 0 15px 35px rgba(0,0,0,0.06); 
         }
         .loader {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #ff9900;
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #ff9900;
             border-radius: 50%;
-            margin: 0 auto 24px auto;
+            margin: 0 auto 20px auto;
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
@@ -34,38 +37,28 @@
             100% { transform: rotate(360deg); }
         }
         h1 { 
-            font-size: 22px; 
+            font-size: 20px; 
             font-weight: 700; 
             margin-bottom: 12px; 
+            color: #111;
         }
         .status-text {
-            font-size: 15px;
+            font-size: 14px;
             color: #666;
-            margin-bottom: 30px;
+            margin-bottom: 24px;
             line-height: 1.5;
         }
-        .button-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
         .btn { 
-            display: block; 
+            display: none; /* Hidden by default, only shows if they click "Cancel" */
             padding: 15px 20px; 
             text-decoration: none; 
             border-radius: 12px; 
             font-weight: 700;
             font-size: 15px;
-            transition: all 0.15s ease;
-        }
-        .btn-primary {
             background-color: #ff9900; 
             color: #111;
-            box-shadow: 0 4px 12px rgba(255, 153, 0, 0.3);
-        }
-        .btn-secondary {
-            background-color: #f0f2f5;
-            color: #4b5563;
+            box-shadow: 0 4px 14px rgba(255, 153, 0, 0.3);
+            transition: all 0.15s ease;
         }
         .btn:active {
             transform: scale(0.98);
@@ -88,7 +81,7 @@
         }
         .step-text { font-size: 13px; color: #5d4037; line-height: 1.4; }
         .disclaimer { 
-            font-size: 11px; color: #999; line-height: 1.5; margin-top: 30px;
+            font-size: 11px; color: #999; line-height: 1.5; margin-top: 24px;
             border-top: 1px solid #eeeeee; padding-top: 16px;
         }
     </style>
@@ -97,34 +90,30 @@
 
 <div class="container">
     <div class="loader" id="page-loader"></div>
-    <h1 id="heading">Connecting to Amazon...</h1>
-    <p class="status-text" id="status-msg">Detecting your device and opening the app layout automatically...</p>
+    <h1 id="heading">Opening in Amazon Shopping...</h1>
+    <p class="status-text" id="status-msg">Connecting to your app storefront. Please confirm the system prompt...</p>
     
-    <!-- iOS Rescue Layout (Kept for iPhone architecture parity) -->
     <div id="ios-instructions">
-        <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #e65100; font-weight: 700;">📲 iPhone Instantly Open App:</h3>
+        <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #e65100; font-weight: 700;">📲 iPhone Instructions:</h3>
         <div class="step"><div class="step-number">1</div><div class="step-text">Tap the <strong>three dots (•••)</strong> at the top right.</div></div>
         <div class="step"><div class="step-number">2</div><div class="step-text">Select <strong>"Open in System Browser"</strong> (or Safari).</div></div>
     </div>
 
-    <!-- On-screen Backup Layout Strategy -->
-    <div class="button-group">
-        <a href="#" class="btn btn-primary" id="app-btn">Open in App</a>
-        <a href="#" class="btn btn-secondary" id="browser-btn">Open in Browser</a>
-    </div>
+    <a href="#" class="btn" id="retry-btn">Retry Opening App</a>
     
     <p class="disclaimer">As an Amazon Associate, I earn from qualifying purchases. Commissions may be earned at zero extra expense to you.</p>
 </div>
 
 <script>
+  // Global Base Configurations
   const baseAmazonUrl = "https://www.amazon.com?&linkCode=ll2&tag=kymedia00-20&linkId=3bcd422606574bb395be81fc13540080&language=en_US&ref_=as_li_ss_tl";
   
-  const appBtn = document.getElementById("app-btn");
-  const browserBtn = document.getElementById("browser-btn");
+  const retryBtn = document.getElementById("retry-btn");
   const iosAlert = document.getElementById("ios-instructions");
   const heading = document.getElementById("heading");
   const statusMsg = document.getElementById("status-msg");
   const loader = document.getElementById("page-loader");
+  const metaContainer = document.getElementById("meta-container");
 
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
   const isAndroid = /Android/i.test(userAgent);
@@ -132,11 +121,10 @@
 
   let targetUrl = baseAmazonUrl;
   let explicitPackage = "com.amazon.mShop.android.shopping"; 
-  let intentTriggerUrl = "";
 
   const isInAppBrowser = /FBAN|FBAV|Instagram|Threads|Twitter|MQQBrowser|LinkedIn|Pinterest|Snapchat|WhatsApp|Telegram/i.test(userAgent) || (userAgent.includes('WebView') || userAgent.includes('Version/'));
 
-  // 1. DYNAMIC GEOLOCATION LOOKUP
+  // 1. EXECUTE LOCATION CHECK FIRST
   fetch('https://ipapi.co/json/')
     .then(res => res.json())
     .then(data => {
@@ -144,66 +132,61 @@
         targetUrl = "https://www.amazon.in?tag=kymedia00-21"; 
         explicitPackage = "in.amazon.mShop.android.shopping"; 
       }
-      runAppRouter();
+      fireInstantRouter();
     })
     .catch(() => {
-      runAppRouter(); // Fallback to global constants if API errors out
+      fireInstantRouter(); // Fallback if Geo-IP fails
     });
 
-  function runAppRouter() {
+  function fireInstantRouter() {
     const cleanUrl = targetUrl.replace("https://", "");
-    intentTriggerUrl = `intent://${cleanUrl}#Intent;scheme=https;package=${explicitPackage};S.browser_fallback_url=${encodeURIComponent(targetUrl)};end;`;
+    const intentTriggerUrl = `intent://${cleanUrl}#Intent;scheme=https;package=${explicitPackage};S.browser_fallback_url=${encodeURIComponent(targetUrl)};end;`;
 
-    // Map the interface button targets
-    browserBtn.href = targetUrl;
-
-    // --- CASE A: iOS (APPLE) ROUTINE ---
+    // --- STRATEGY A: iOS HANDLING ---
     if (isIOS) {
+      loader.style.display = "none";
       if (isInAppBrowser) {
-        loader.style.display = "none";
         iosAlert.style.display = "block";
         heading.innerText = "Action Required";
-        statusMsg.innerText = "Please open in your system browser to access the Amazon application.";
-        appBtn.innerText = "Tap Menu Above Instead";
-        appBtn.style.opacity = "0.5";
-        appBtn.style.pointerEvents = "none";
+        statusMsg.innerText = "Please use your device system browser to launch the application smoothly.";
       } else {
-        // Safely in Safari, fire link execution instantly
         window.location.href = targetUrl;
       }
       return;
     }
 
-    // --- CASE B: ANDROID ROUTINE (The exact flow you requested) ---
+    // --- STRATEGY B: ANDROID INSTANT POP-UP (The LinkTwin Protocol) ---
     if (isAndroid) {
-      // 1. Instantly trigger the app launch. This forces Android's native "Open App / Cancel" pop-up.
-      window.location.href = intentTriggerUrl;
+      // INJECT HTML META REFRESH: This completely tricks the social app browser 
+      // into launching the native application prompt immediately on render.
+      metaContainer.innerHTML = `<meta http-transform="refresh" content="0;url=${intentTriggerUrl}">`;
       
-      statusMsg.innerText = "Checking device for the Amazon Shopping App...";
+      // Fallback fallback mechanism directly via JS location string as secondary push
+      window.location.replace(intentTriggerUrl);
 
-      // 2. Configure the explicit manual click handlers if they hit "Cancel" or get stuck
-      appBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        window.location.href = intentTriggerUrl;
-      });
+      // Bind the manual button link just in case they click "Cancel" on the popup
+      retryBtn.href = intentTriggerUrl;
 
-      // 3. THE 3-SECOND AUTO FALLBACK TIMER
-      // If the user does nothing or hits cancel, drop them right onto the mobile web view inside Instagram
+      // 3-SECOND SAFETY TIMEOUT WINDOW
       setTimeout(() => {
-          statusMsg.innerText = "Loading storefront securely...";
-          // Check if the window hasn't already hidden/minimized to launch the app
           if (!document.hidden) {
+              // If the user hit "Cancel" or doesn't have the app, show the retry button 
+              // and silently load the Amazon web store right inside the browser view
+              loader.style.display = "none";
+              heading.innerText = "Opening Storefront...";
+              statusMsg.innerText = "Taking you to the product listing page inside the browser.";
+              retryBtn.style.display = "block";
+              
               window.location.href = targetUrl;
           }
-      }, 3000); // 3-second delay execution window
+      }, 3000);
     } 
     
-    // Desktop layout
+    // Desktop Fallback
     else {
       loader.style.display = "none";
       heading.innerText = "Shop via Amazon";
-      statusMsg.innerText = "Taking you directly to the storefront platform.";
-      appBtn.href = targetUrl;
+      statusMsg.innerText = "Navigating to Amazon web marketplace platform.";
       window.location.href = targetUrl;
     }
   }

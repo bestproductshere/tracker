@@ -93,6 +93,7 @@
 <div class="container">
     <h1 id="heading">Connecting to Amazon...</h1>
     
+    <!-- iOS Helper Layout (Visible ONLY inside Instagram/TikTok/etc.) -->
     <div id="ios-instructions">
         <h3 style="margin: 0 0 15px 0; font-size: 16px; color: #e65100; font-weight: 700;">📲 iPhone User? Open App Instantly:</h3>
         <div class="step">
@@ -105,9 +106,10 @@
         </div>
     </div>
 
-    <a href="#" class="btn" id="amazon-link">Open Amazon Shopping App</a>
+    <!-- Main Dynamic Action Button (Backup Trigger) -->
+    <a href="#" class="btn" id="amazon-link">Opening Amazon Shopping App...</a>
     
-    <p class="disclaimer">As an Amazon aAssociate, I earn from qualifying purchases. Commissions may be earned from links below at zero extra expense to you.</p>
+    <p class="disclaimer">As an Amazon Associate, I earn from qualifying purchases. Commissions may be earned from links below at zero extra expense to you.</p>
 </div>
 
 <script>
@@ -125,13 +127,14 @@
   let targetUrl = baseAmazonUrl;
   let explicitPackage = "com.amazon.mShop.android.shopping"; // Default global package string
 
+  // Common check to detect restricted in-app environments
+  const isInAppBrowser = /FBAN|FBAV|Instagram|Threads|Twitter|MQQBrowser|LinkedIn|Pinterest|Snapchat|WhatsApp|Telegram/i.test(userAgent) || (userAgent.includes('WebView') || userAgent.includes('Version/'));
+
   // 1. IMMEDIATE AUTO-ESCAPE FOR ANDROID IN-APP BROWSERS
   if (isAndroid) {
-    const isInAppBrowser = /FBAN|FBAV|Instagram|Threads|Twitter|MQQBrowser|LinkedIn|Pinterest|Snapchat|WhatsApp|Telegram/i.test(userAgent) || (userAgent.includes('WebView') || userAgent.includes('Version/'));
     const urlParams = new URLSearchParams(window.location.search);
     const alreadyEscaped = urlParams.get('escaped') === 'true';
 
-    // Break out of the social sandbox into clean, native Chrome immediately on load
     if (isInAppBrowser && !alreadyEscaped) {
       const currentUrl = new URL(window.location.href);
       currentUrl.searchParams.set('escaped', 'true');
@@ -147,41 +150,54 @@
     .then(res => res.json())
     .then(data => {
       if (data.country_code === 'IN') {
-        // Update to your direct Amazon India localized product link here
+        // REMINDER: Replace this with your exact Amazon India localized product link
         targetUrl = "https://www.amazon.in?tag=kymedia00-21"; 
-        explicitPackage = "in.amazon.mShop.android.shopping"; // Explicit Indian App ID
+        explicitPackage = "in.amazon.mShop.android.shopping"; 
       }
       setupButton();
     })
     .catch(() => {
-      setupButton(); // Fallback to global variables if Geo API fails
+      setupButton(); // Fallback to global defaults if Geo API fails
     });
 
   function setupButton() {
+    // Map the backup button paths dynamically just in case auto-redirect fails
+    btn.href = targetUrl;
+
     if (isIOS) {
-      iosAlert.style.display = "block";
-      heading.innerText = "Action Required Below:";
-      btn.innerText = "Continue to Amazon Web View";
-      btn.href = targetUrl; 
+      if (isInAppBrowser) {
+        iosAlert.style.display = "block";
+        heading.innerText = "Action Required Below:";
+        btn.innerText = "Tap Three Dots Above to Open App";
+      } else {
+        heading.innerText = "Opening Amazon App...";
+        btn.innerText = "Click here if not redirected";
+        
+        // AUTO-LAUNCH FOR IOS NATIVE SAFARI
+        window.location.href = targetUrl;
+      }
     } else if (isAndroid) {
-      btn.innerText = "Open Amazon Shopping App";
-      
-      btn.addEventListener("click", (e) => {
-        e.preventDefault();
+      if (isInAppBrowser) {
+        // If the device is still trying to process the breakout, keep them updated
+        heading.innerText = "Opening Chrome...";
+        btn.innerText = "Switching to Chrome Browser...";
+      } else {
+        heading.innerText = "Opening Amazon App...";
+        btn.innerText = "Click here if not redirected";
         
+        // AUTO-LAUNCH FOR ANDROID NATIVE CHROME
         const cleanUrl = targetUrl.replace("https://", "");
-        
-        // Strict explicit package routing 
         const explicitIntent = `intent://${cleanUrl}#Intent;scheme=https;package=${explicitPackage};S.browser_fallback_url=${encodeURIComponent(targetUrl)};end;`;
         
         window.location.href = explicitIntent;
 
-        // Failsafe backup mechanism: If package isn't on the phone, stay in Chrome and load the web store
+        // Failsafe backup mechanism: If package isn't found, load the web version smoothly inside Chrome
         setTimeout(() => {
             window.location.href = targetUrl;
         }, 1200);
-      });
+      }
     } else {
+      // Desktop Fallback
       btn.innerText = "Go to Amazon Site";
       btn.href = targetUrl;
     }

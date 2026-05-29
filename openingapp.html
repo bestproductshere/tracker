@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Taking you to the product...</title>
+    <title>App Launcher</title>
     <style>
         body { 
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
@@ -14,47 +14,69 @@
         }
         .container { 
             max-width: 430px; 
-            margin: 0 auto; 
+            margin: 40px auto 0 auto; 
             background: white; 
             padding: 30px 24px; 
-            border-radius: 16px; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05); 
+            border-radius: 20px; 
+            box-shadow: 0 15px 35px rgba(0,0,0,0.08); 
+        }
+        .app-icon {
+            width: 70px;
+            height: 70px;
+            background: #ff9900;
+            border-radius: 18px;
+            margin: 0 auto 20px auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 20px rgba(255, 153, 0, 0.2);
+        }
+        .app-icon svg {
+            width: 40px;
+            height: 40px;
+            fill: #111;
         }
         h1 { 
             font-size: 22px; 
             font-weight: 700;
             color: #111; 
-            margin-bottom: 24px; 
+            margin-bottom: 8px; 
+        }
+        .subtitle {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 28px;
         }
         .btn { 
             display: block; 
             background-color: #ff9900; 
             color: #111; 
             font-weight: 700; 
-            padding: 14px 24px; 
+            padding: 16px 24px; 
             text-decoration: none; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 12px rgba(255, 153, 0, 0.3); 
+            border-radius: 12px; 
+            box-shadow: 0 5px 15px rgba(255, 153, 0, 0.35); 
             font-size: 16px; 
-            margin-bottom: 24px;
-            transition: transform 0.1s ease;
+            margin-bottom: 20px;
+            transition: all 0.15s ease;
         }
         .btn:active {
-            transform: scale(0.98);
+            transform: scale(0.97);
+            background-color: #e68a00;
         }
         #ios-instructions {
             display: none;
             background: #fff9e6;
             border: 1px solid #ffe0b2;
             border-radius: 12px;
-            padding: 20px;
+            padding: 16px;
             margin-bottom: 24px;
             text-align: left;
         }
         .step {
             display: flex;
             align-items: center;
-            margin-bottom: 14px;
+            margin-bottom: 10px;
         }
         .step:last-child {
             margin-bottom: 0;
@@ -63,26 +85,26 @@
             background: #ffb74d;
             color: #fff;
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 22px;
+            height: 22px;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 13px;
-            margin-right: 12px;
+            font-size: 12px;
+            margin-right: 10px;
             flex-shrink: 0;
         }
         .step-text {
-            font-size: 14px;
+            font-size: 13px;
             color: #5d4037;
             line-height: 1.4;
         }
         .disclaimer { 
-            font-size: 12px; 
-            color: #777; 
+            font-size: 11px; 
+            color: #999; 
             line-height: 1.5;
-            margin-top: 20px;
+            margin-top: 24px;
             border-top: 1px solid #eeeeee;
             padding-top: 16px;
         }
@@ -91,114 +113,126 @@
 <body>
 
 <div class="container">
-    <h1 id="heading">Connecting to Amazon...</h1>
+    <div class="app-icon">
+        <!-- SVG Shopping Cart Icon -->
+        <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+    </div>
+
+    <h1 id="heading">Open in Amazon App</h1>
+    <p class="subtitle" id="sub-heading">Redirecting you to the product listing...</p>
     
-    <!-- iOS Helper Layout (Visible ONLY inside Instagram/TikTok/etc.) -->
+    <!-- iOS Layout -->
     <div id="ios-instructions">
-        <h3 style="margin: 0 0 15px 0; font-size: 16px; color: #e65100; font-weight: 700;">📲 iPhone User? Open App Instantly:</h3>
+        <h3 style="margin: 0 0 10px 0; font-size: 14px; color: #e65100; font-weight: 700;">📲 iPhone Instantly Open App:</h3>
         <div class="step">
             <div class="step-number">1</div>
-            <div class="step-text">Tap the <strong>three dots (•••)</strong> in the top-right corner of your screen.</div>
+            <div class="step-text">Tap the <strong>three dots (•••)</strong> at the top right.</div>
         </div>
         <div class="step">
             <div class="step-number">2</div>
-            <div class="step-text">Select <strong>"Open in System Browser"</strong> (or Open in Safari).</div>
+            <div class="step-text">Select <strong>"Open in System Browser"</strong> (or Safari).</div>
         </div>
     </div>
 
-    <!-- Main Dynamic Action Button (Backup Trigger) -->
-    <a href="#" class="btn" id="amazon-link">Opening Amazon Shopping App...</a>
+    <!-- Main Explicit Action Button -->
+    <a href="#" class="btn" id="amazon-link">Open App</a>
     
-    <p class="disclaimer">As an Amazon Associate, I earn from qualifying purchases. Commissions may be earned from links below at zero extra expense to you.</p>
+    <p class="disclaimer">As an Amazon Associate, I earn from qualifying purchases. Commissions may be earned at zero extra expense to you.</p>
 </div>
 
 <script>
-  // Global base Amazon tracking links
+  // Global settings
   const baseAmazonUrl = "https://www.amazon.com?&linkCode=ll2&tag=kymedia00-20&linkId=3bcd422606574bb395be81fc13540080&language=en_US&ref_=as_li_ss_tl";
-
+  
   const btn = document.getElementById("amazon-link");
   const iosAlert = document.getElementById("ios-instructions");
   const heading = document.getElementById("heading");
+  const subHeading = document.getElementById("sub-heading");
 
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
   const isAndroid = /Android/i.test(userAgent);
   const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
 
   let targetUrl = baseAmazonUrl;
-  let explicitPackage = "com.amazon.mShop.android.shopping"; // Default global package string
+  let explicitPackage = "com.amazon.mShop.android.shopping"; 
+  let currentCountry = "US";
 
-  // Common check to detect restricted in-app environments
+  // Check if trapped inside social media ecosystem
   const isInAppBrowser = /FBAN|FBAV|Instagram|Threads|Twitter|MQQBrowser|LinkedIn|Pinterest|Snapchat|WhatsApp|Telegram/i.test(userAgent) || (userAgent.includes('WebView') || userAgent.includes('Version/'));
 
-  // 1. IMMEDIATE AUTO-ESCAPE FOR ANDROID IN-APP BROWSERS
-  if (isAndroid) {
-    const urlParams = new URLSearchParams(window.location.search);
-    const alreadyEscaped = urlParams.get('escaped') === 'true';
-
-    if (isInAppBrowser && !alreadyEscaped) {
-      const currentUrl = new URL(window.location.href);
-      currentUrl.searchParams.set('escaped', 'true');
-      const cleanHubUrl = currentUrl.toString().replace("https://", "");
-      
-      const escapeIntent = `intent://${cleanHubUrl}#Intent;scheme=https;package=com.android.chrome;end;`;
-      window.location.href = escapeIntent;
-    }
-  }
-
-  // 2. GEOLOCATION RUNTIME MAPPING
+  // 1. RUNTIME GEOLOCATION DETECTOR
   fetch('https://ipapi.co/json/')
     .then(res => res.json())
     .then(data => {
-      if (data.country_code === 'IN') {
-        // REMINDER: Replace this with your exact Amazon India localized product link
+      currentCountry = data.country_code;
+      if (currentCountry === 'IN') {
         targetUrl = "https://www.amazon.in?tag=kymedia00-21"; 
         explicitPackage = "in.amazon.mShop.android.shopping"; 
       }
-      setupButton();
+      initializeRouter();
     })
     .catch(() => {
-      setupButton(); // Fallback to global defaults if Geo API fails
+      initializeRouter(); // Fallback to global variables if API stalls
     });
 
-  function setupButton() {
-    // Map the backup button paths dynamically just in case auto-redirect fails
-    btn.href = targetUrl;
-
+  function initializeRouter() {
+    // IOS HANDLING ROUTE
     if (isIOS) {
       if (isInAppBrowser) {
         iosAlert.style.display = "block";
-        heading.innerText = "Action Required Below:";
-        btn.innerText = "Tap Three Dots Above to Open App";
+        heading.innerText = "Action Required";
+        subHeading.innerText = "Social networks block direct app linking on iOS.";
+        btn.innerText = "Follow steps above to open";
+        btn.style.opacity = "0.6";
+        btn.style.pointerEvents = "none"; // Lock the button inside Instagram jail
       } else {
-        heading.innerText = "Opening Amazon App...";
-        btn.innerText = "Click here if not redirected";
-        
-        // AUTO-LAUNCH FOR IOS NATIVE SAFARI
+        // Safe in native Safari -> Let Apple Universal Links handle it on click
+        btn.href = targetUrl;
+        btn.innerText = "Continue to Amazon App";
+        // Attempt a one-time safe click-less kick inside Safari
         window.location.href = targetUrl;
       }
-    } else if (isAndroid) {
-      if (isInAppBrowser) {
-        // If the device is still trying to process the breakout, keep them updated
-        heading.innerText = "Opening Chrome...";
-        btn.innerText = "Switching to Chrome Browser...";
-      } else {
-        heading.innerText = "Opening Amazon App...";
-        btn.innerText = "Click here if not redirected";
+    } 
+    
+    // ANDROID HANDLING ROUTE (Matches the LinkTwin Pop-up Logic)
+    else if (isAndroid) {
+      btn.innerText = "Open App";
+      
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
         
-        // AUTO-LAUNCH FOR ANDROID NATIVE CHROME
         const cleanUrl = targetUrl.replace("https://", "");
-        const explicitIntent = `intent://${cleanUrl}#Intent;scheme=https;package=${explicitPackage};S.browser_fallback_url=${encodeURIComponent(targetUrl)};end;`;
         
-        window.location.href = explicitIntent;
+        if (isInAppBrowser) {
+          // STEP A: If they are inside Instagram, clicking "Open App" kicks them to Chrome
+          const currentUrlString = window.location.href;
+          const cleanHubUrl = currentUrlString.replace("https://", "");
+          
+          // Force launch Google Chrome with this exact page running inside it
+          const chromeIntent = `intent://${cleanHubUrl}${currentUrlString.includes('?') ? '&' : '?'}escaped=true#Intent;scheme=https;package=com.android.chrome;end;`;
+          window.location.href = chromeIntent;
+        } else {
+          // STEP B: They are now safely inside Chrome! Clicking the button opens the real app package
+          const explicitAppIntent = `intent://${cleanUrl}#Intent;scheme=https;package=${explicitPackage};S.browser_fallback_url=${encodeURIComponent(targetUrl)};end;`;
+          window.location.href = explicitAppIntent;
 
-        // Failsafe backup mechanism: If package isn't found, load the web version smoothly inside Chrome
-        setTimeout(() => {
-            window.location.href = targetUrl;
-        }, 1200);
-      }
-    } else {
-      // Desktop Fallback
-      btn.innerText = "Go to Amazon Site";
+          // STEP C: Cross-Country Fallback Router (The second pop-up behavior you noticed)
+          // If the app intent execution completely fails because of package mismatch or missing app:
+          setTimeout(() => {
+              if (currentCountry === 'IN' && targetUrl.includes('amazon.in')) {
+                  // User is in India, but system failed to process the Indian app package. 
+                  // Alert them clearly, then dump safely to standard chrome browser window.
+                  alert("Redirecting to Amazon India web storefront...");
+              }
+              window.location.href = targetUrl;
+          }, 1400);
+        }
+      });
+    } 
+    
+    // DESKTOP / OTHER FALLBACK
+    else {
+      btn.innerText = "Go to Amazon Store";
       btn.href = targetUrl;
     }
   }

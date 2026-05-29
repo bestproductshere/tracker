@@ -42,7 +42,6 @@
         .btn:active {
             transform: scale(0.98);
         }
-        /* iOS Instruction Banner */
         #ios-instructions {
             display: none;
             background: #fff9e6;
@@ -94,7 +93,7 @@
 <div class="container">
     <h1 id="heading">Connecting to Amazon...</h1>
     
-    <!-- iOS UI Instruction Assistant Card -->
+    <!-- iOS Helper Layout -->
     <div id="ios-instructions">
         <h3 style="margin: 0 0 15px 0; font-size: 16px; color: #e65100; font-weight: 700;">📲 iPhone User? Open App Instantly:</h3>
         <div class="step">
@@ -107,15 +106,15 @@
         </div>
     </div>
 
-    <!-- Interactive Call to Action Button -->
-    <a href="#" class="btn" id="amazon-link">View Product on Amazon</a>
+    <!-- Main Button -->
+    <a href="#" class="btn" id="amazon-link">Open Amazon Shopping App</a>
     
     <p class="disclaimer">As an Amazon Associate, I earn from qualifying purchases. Commissions may be earned from links below at zero extra expense to you.</p>
 </div>
 
 <script>
-  // Your base tracking target link
-  const amazonWebUrl = "https://www.amazon.com?&linkCode=ll2&tag=pt-bestproductshere1-20&linkId=3bcd422606574bb395be81fc13540080&language=en_US&ref_=as_li_ss_tl";
+  // Your base tracking link configured with OneLink
+  const baseAmazonUrl = "https://www.amazon.com?&linkCode=ll2&tag=kymedia00-20&linkId=3bcd422606574bb395be81fc13540080&language=en_US&ref_=as_li_ss_tl";
 
   const btn = document.getElementById("amazon-link");
   const iosAlert = document.getElementById("ios-instructions");
@@ -125,40 +124,52 @@
   const isAndroid = /Android/i.test(userAgent);
   const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
 
-  if (isIOS) {
-    // Show iPhone layout instructions to prevent Apple tracking strips
-    iosAlert.style.display = "block";
-    heading.innerText = "Action Required Below:";
-    btn.innerText = "Continue to Amazon Web View";
-    btn.href = amazonWebUrl; 
-  } else if (isAndroid) {
-    btn.innerText = "Open Amazon Shopping App";
-    
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      
-      // Auto-resolve package variants (.com vs .in) depending on your target link destination
-      let packageName = "com.amazon.mShop.android.shopping"; 
-      if (amazonWebUrl.includes("amazon.in")) {
-        packageName = "in.amazon.mShop.android.shopping";
+  // Run an instant IP-check to rewrite the URL for India BEFORE the user clicks
+  let targetUrl = baseAmazonUrl;
+  
+  fetch('https://ipapi.co/json/')
+    .then(res => res.json())
+    .then(data => {
+      if (data.country_code === 'IN') {
+        // Automatically swap to an Amazon India link format if the user is in India
+        targetUrl = "https://www.amazon.in?tag=kymedia00-21"; // Replace with your real India Associate tag
       }
-
-      const rawUrlWithoutHttps = amazonWebUrl.replace("https://", "");
-      
-      // The browser_fallback_url safety route halts Google Play crash triggers across international borders
-      const androidIntent = `intent://${rawUrlWithoutHttps}#Intent;scheme=https;package=${packageName};S.browser_fallback_url=${encodeURIComponent(amazonWebUrl)};end;`;
-      
-      window.location.href = androidIntent;
-
-      // Local browser fail-safe script container fallback loop
-      setTimeout(() => {
-          window.location.href = amazonWebUrl;
-      }, 1000);
+      setupButton();
+    })
+    .catch(() => {
+      setupButton(); // Fallback to standard tracking URL if API is blocked
     });
-  } else {
-    // Basic desktop display execution rules
-    btn.innerText = "Go to Amazon Site";
-    btn.href = amazonWebUrl;
+
+  function setupButton() {
+    if (isIOS) {
+      iosAlert.style.display = "block";
+      heading.innerText = "Action Required Below:";
+      btn.innerText = "Continue to Amazon Web View";
+      btn.href = targetUrl; 
+    } else if (isAndroid) {
+      btn.innerText = "Open Amazon Shopping App";
+      
+      btn.addEventListener("click", (e) => {
+        e.preventDefault();
+        
+        // Clean the scheme for Intent construction
+        const cleanUrl = targetUrl.replace("https://", "");
+        
+        // UNIVERSAL INTENT: Spawns a system call using the active URL routing context
+        // If it's a .com link, it calls the global package. If it's a .in link, it calls the India package.
+        let packageString = "com.amazon.mShop.android.shopping";
+        if (targetUrl.includes("amazon.in")) {
+          packageString = "in.amazon.mShop.android.shopping";
+        }
+
+        const universalIntent = `intent://${cleanUrl}#Intent;scheme=https;package=${packageString};S.browser_fallback_url=${encodeURIComponent(targetUrl)};end;`;
+        
+        window.location.href = universalIntent;
+      });
+    } else {
+      btn.innerText = "Go to Amazon Site";
+      btn.href = targetUrl;
+    }
   }
 </script>
 

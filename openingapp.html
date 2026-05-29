@@ -93,7 +93,6 @@
 <div class="container">
     <h1 id="heading">Connecting to Amazon...</h1>
     
-    <!-- iOS Helper Layout -->
     <div id="ios-instructions">
         <h3 style="margin: 0 0 15px 0; font-size: 16px; color: #e65100; font-weight: 700;">📲 iPhone User? Open App Instantly:</h3>
         <div class="step">
@@ -106,14 +105,13 @@
         </div>
     </div>
 
-    <!-- Main Button -->
     <a href="#" class="btn" id="amazon-link">Open Amazon Shopping App</a>
     
-    <p class="disclaimer">As Aan Amazon Associate, I earn from qualifying purchases. Commissions may be earned from links below at zero extra expense to you.</p>
+    <p class="disclaimer">As an Amazon Associate, I earn from qualifying purchases. Commissions may be earned from links below at zero extra expense to you.</p>
 </div>
 
 <script>
-  // Global base Amazon tracking configurations
+  // Global base Amazon tracking links
   const baseAmazonUrl = "https://www.amazon.com?&linkCode=ll2&tag=kymedia00-20&linkId=3bcd422606574bb395be81fc13540080&language=en_US&ref_=as_li_ss_tl";
 
   const btn = document.getElementById("amazon-link");
@@ -125,40 +123,39 @@
   const isIOS = /iPhone|iPad|iPod/i.test(userAgent);
 
   let targetUrl = baseAmazonUrl;
+  let explicitPackage = "com.amazon.mShop.android.shopping"; // Default global package string
 
-  // Global Sandbox Escape Routine for Android
+  // 1. DYNAMIC AUTO-ESCAPE FOR ANDROID IN-APP BROWSERS
   if (isAndroid) {
-    // Detects any common in-app webview container footprint (Instagram, FB, Threads, Telegram, etc.)
     const isInAppBrowser = /FBAN|FBAV|Instagram|Threads|Twitter|MQQBrowser|LinkedIn|Pinterest|Snapchat|WhatsApp|Telegram/i.test(userAgent) || (userAgent.includes('WebView') || userAgent.includes('Version/'));
-    
-    // Check an escape marker parameter to prevent infinite loop loops
     const urlParams = new URLSearchParams(window.location.search);
     const alreadyEscaped = urlParams.get('escaped') === 'true';
 
+    // If locked inside an in-app browser environment, force break-out into native Chrome immediately
     if (isInAppBrowser && !alreadyEscaped) {
-      // Re-compile current GitHub address context with a dynamic query tag
       const currentUrl = new URL(window.location.href);
       currentUrl.searchParams.set('escaped', 'true');
       const cleanHubUrl = currentUrl.toString().replace("https://", "");
       
-      // Force Android system default browser shell mapping allocation
+      // Target Chrome to bypass social media webview wrappers
       const escapeIntent = `intent://${cleanHubUrl}#Intent;scheme=https;package=com.android.chrome;end;`;
       window.location.href = escapeIntent;
     }
   }
 
-  // Geolocation Resolution Thread execution
+  // 2. GEOLOCATION RUNTIME MAPPING
   fetch('https://ipapi.co/json/')
     .then(res => res.json())
     .then(data => {
       if (data.country_code === 'IN') {
-        // REMINDER: Replace this placeholder link with your exact Indian product detail page listing URL
+        // Update to your direct Amazon India localized product listing URL here
         targetUrl = "https://www.amazon.in?tag=kymedia00-21"; 
+        explicitPackage = "in.amazon.mShop.android.shopping"; // Swap to Indian package explicitly
       }
       setupButton();
     })
     .catch(() => {
-      setupButton(); // Execute fallback rules seamlessly if geo API throttles
+      setupButton(); // Execute standard initialization rules if Geo API fails
     });
 
   function setupButton() {
@@ -175,12 +172,12 @@
         
         const cleanUrl = targetUrl.replace("https://", "");
         
-        // Comprehensive package-free domain router execution format
-        const universalIntent = `intent://${cleanUrl}#Intent;scheme=https;S.browser_fallback_url=${encodeURIComponent(targetUrl)};end;`;
+        // Formulate strict explicit intent routing matching your target countries
+        const explicitIntent = `intent://${cleanUrl}#Intent;scheme=https;package=${explicitPackage};S.browser_fallback_url=${encodeURIComponent(targetUrl)};end;`;
         
-        window.location.href = universalIntent;
+        window.location.href = explicitIntent;
 
-        // Failsafe execution frame callback sequence
+        // Failsafe backup mechanism: forces browser load if app package execution fails
         setTimeout(() => {
             window.location.href = targetUrl;
         }, 1200);

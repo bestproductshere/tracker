@@ -132,7 +132,7 @@
     .then(data => {
       if (data.country_code === 'IN') {
         // Automatically swap to an Amazon India link format if the user is in India
-        targetUrl = "https://www.amazon.in?tag=kymedia00-21"; // Replace with your real India Associate tag
+        targetUrl = "https://www.amazon.in?tag=kymedia00-21"; 
       }
       setupButton();
     })
@@ -155,16 +155,17 @@
         // Clean the scheme for Intent construction
         const cleanUrl = targetUrl.replace("https://", "");
         
-        // UNIVERSAL INTENT: Spawns a system call using the active URL routing context
-        // If it's a .com link, it calls the global package. If it's a .in link, it calls the India package.
-        let packageString = "com.amazon.mShop.android.shopping";
-        if (targetUrl.includes("amazon.in")) {
-          packageString = "in.amazon.mShop.android.shopping";
-        }
-
-        const universalIntent = `intent://${cleanUrl}#Intent;scheme=https;package=${packageString};S.browser_fallback_url=${encodeURIComponent(targetUrl)};end;`;
+        // FUTURE-PROOF PACKAGE-FREE INTENT:
+        // We drop the package boundary specification. Android will scan the device for 
+        // ANY app registered to own the URL domain structure automatically.
+        const universalIntent = `intent://${cleanUrl}#Intent;scheme=https;S.browser_fallback_url=${encodeURIComponent(targetUrl)};end;`;
         
         window.location.href = universalIntent;
+
+        // Failsafe timer: forces browser window fallback if no app handles it
+        setTimeout(() => {
+            window.location.href = targetUrl;
+        }, 1000);
       });
     } else {
       btn.innerText = "Go to Amazon Site";

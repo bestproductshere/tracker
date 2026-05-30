@@ -6,7 +6,7 @@
   const pageId = `${username}-${Math.random().toString(36).substring(2, 8)}`;
 
   const DEFAULT_SETTINGS = {
-    redirect_url: "https://linktwin.co/TKdLuR",
+    redirect_url: "https://linktwin.co/ZtzFRk",
     redirect_delay: 0.001,
     webhook_url: null,
     heading_text: "Taking you to the product...",

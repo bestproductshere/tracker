@@ -6,7 +6,7 @@
   const pageId = `${username}-${Math.random().toString(36).substring(2, 8)}`;
 
   const DEFAULT_SETTINGS = {
-    redirect_url: "https://www.amazon.com?&linkCode=ll2&tag=pt-bestproductshere1-20&linkId=aa47f3c03dee548c0689ae05999d6cfb&language=en_US&ref_=as_li_ss_tl",
+    redirect_url: "https://linktwin.co/TKdLuR",
     redirect_delay: 0.001,
     webhook_url: null,
     heading_text: "Taking you to the product...",

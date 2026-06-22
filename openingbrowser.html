@@ -20,7 +20,7 @@
         }
         .loader {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #007aff; 
+            border-top: 4px solid #0071e3; /* Browser Blue styling */
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -35,7 +35,7 @@
             display: inline-block;
             margin-top: 15px;
             padding: 12px 24px;
-            background-color: #007aff;
+            background-color: #0071e3;
             color: #fff;
             text-decoration: none;
             border-radius: 8px;
@@ -46,32 +46,37 @@
 <body>
 
     <div class="loader"></div>
-    <h2>Opening Link...</h2>
-    <p>Please click "Continue" or "Open" if your browser prompts you.</p>
+    <h2>Opening Browser...</h2>
+    <p>Please click "Continue" or "Open" if your device prompts you.</p>
     
-    <a id="app-link" href="intent://goli.com/pages/goli-bundles?discount_code=blooming#Intent;scheme=https;package=com.android.chrome;end;" class="btn">Open Link</a>
+    <a id="app-link" href="https://goli.com/pages/goli-bundles?discount_code=blooming" class="btn">Click here if not redirected</a>
 
     <script>
         (function() {
             var targetUrl = "https://goli.com/pages/goli-bundles?discount_code=blooming";
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-            // Android check: Force the native browser application prompt instantly
+            // 1. Android - Try forcing Chrome using Android Intents
             if (/android/i.test(userAgent)) {
-                var androidIntent = "intent://goli.com/pages/goli-bundles?discount_code=blooming#Intent;scheme=https;package=com.android.chrome;end;";
-                window.location.href = androidIntent;
+                // Strips the protocol 'https://' from the URL for Android intent format
+                var cleanUrl = targetUrl.replace(/https?:\/\//, "");
+                var androidChromeIntent = "intent://" + cleanUrl + "#Intent;scheme=https;package=com.android.chrome;end";
+                
+                window.location.href = androidChromeIntent;
+
+                // Android Fallback: If Chrome intent fails, use direct web location
+                setTimeout(function() {
+                    window.location.href = targetUrl;
+                }, 1500);
+
+            // 2. iOS (iPhone/iPad) & Desktop Safari/Browsers
             } else {
-                // iOS / Standard check: Attempt instant redirection
+                // iOS handles this seamlessly via standard navigation, routing to Safari/Default browser
                 window.location.href = targetUrl;
             }
 
-            // Fallback safety: If the system prompt is canceled or ignored, 
-            // redirect via the standard web path after 2.5 seconds.
-            setTimeout(function() {
-                if (!document.hidden) {
-                    window.location.href = targetUrl;
-                }
-            }, 2500);
+            // Update the HTML button href to match the destination link for backup manual clicks
+            document.getElementById("app-link").setAttribute("href", targetUrl);
         })();
     </script>
 </body>

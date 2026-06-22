@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Opening Browser...</title>
+    <title>Opening Chrome App...</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -20,7 +20,7 @@
         }
         .loader {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #FF9900; /* Loader Color */
+            border-top: 4px solid #4285F4; /* Chrome Blue */
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -35,8 +35,8 @@
             display: inline-block;
             margin-top: 15px;
             padding: 12px 24px;
-            background-color: #FF9900;
-            color: #111;
+            background-color: #4285F4; /* Chrome Blue */
+            color: #fff;
             text-decoration: none;
             border-radius: 8px;
             font-weight: bold;
@@ -46,38 +46,29 @@
 <body>
 
     <div class="loader"></div>
-    <h2>Opening Link...</h2>
+    <h2>Opening Google Chrome...</h2>
     <p>Please click "Continue" or "Open" if your browser prompts you.</p>
     
-    <a id="app-link" href="https://goli.com/pages/goli-bundles?discount_code=blooming" class="btn">Open Link</a>
+    <a id="app-link" href="googlechrome://google.com" class="btn">Open Chrome App</a>
 
     <script>
         (function() {
-            var targetUrl = "goli.com/pages/goli-bundles?discount_code=blooming";
-            var fullUrl = "https://" + targetUrl;
+            // The custom URL scheme that forces the device to open Google Chrome
+            // This example opens google.com inside the Chrome app
+            var chromeAppUrl = "googlechrome://google.com";
             
-            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            var appUrl = fullUrl; // Default fallback
+            // Fallback website if Chrome is not installed (e.g., falls back to web version)
+            var webFallbackUrl = "https://www.google.com";
 
-            // 1. Determine Device and set up specific browser custom URL scheme
-            if (/android/i.test(userAgent)) {
-                // Android intent logic to specifically force open in Google Chrome
-                appUrl = "intent://" + targetUrl + "#Intent;scheme=https;package=com.android.chrome;end";
-            } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
-                // iOS logic to specifically force open in native Safari app 
-                appUrl = "x-web-search://?" + targetUrl;
-            }
+            // Attempt to trigger the device's native app prompt immediately on load
+            window.location.href = chromeAppUrl;
 
-            // Update the HTML manual button just in case
-            document.getElementById("app-link").href = appUrl;
-
-            // 2. Attempt to trigger the native browser application prompt immediately on load
-            window.location.href = appUrl;
-
-            // 3. Fallback safety: If deep-linking fails or user stays on page, open natively
+            // Fallback safety: If the user stays on this page (meaning they don't have the app, 
+            // or they clicked 'Cancel'), redirect them to the regular website after 2.5 seconds.
             setTimeout(function() {
+                // Check if the user is still looking at this page
                 if (!document.hidden) {
-                    window.location.href = fullUrl;
+                    window.location.href = webFallbackUrl;
                 }
             }, 2500);
         })();

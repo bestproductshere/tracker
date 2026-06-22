@@ -49,24 +49,22 @@
     <h2>Opening Google Chrome...</h2>
     <p>Please click "Continue" or "Open" if your browser prompts you.</p>
     
-    <a id="app-link" href="googlechrome://google.com" class="btn">Open Chrome App</a>
+    <a id="app-link" href="intent://google.com/#Intent;scheme=https;package=com.android.chrome;end;" class="btn">Open Chrome App</a>
 
     <script>
         (function() {
-            // The custom URL scheme that forces the device to open Google Chrome
-            // This example opens google.com inside the Chrome app
-            var chromeAppUrl = "googlechrome://google.com";
+            // Android Intent syntax targeting the stable Chrome package
+            // This forces Android to intercept the URL and handle it via Chrome
+            var chromeIntentUrl = "intent://google.com/#Intent;scheme=https;package=com.android.chrome;end;";
             
-            // Fallback website if Chrome is not installed (e.g., falls back to web version)
+            // Fallback web URL if the browser completely blocks the intent redirect
             var webFallbackUrl = "https://www.google.com";
 
-            // Attempt to trigger the device's native app prompt immediately on load
-            window.location.href = chromeAppUrl;
+            // Attempt to trigger the instant pop-up / redirect on load
+            window.location.href = chromeIntentUrl;
 
-            // Fallback safety: If the user stays on this page (meaning they don't have the app, 
-            // or they clicked 'Cancel'), redirect them to the regular website after 2.5 seconds.
+            // Fallback safety: If the user remains on the page, redirect to standard web
             setTimeout(function() {
-                // Check if the user is still looking at this page
                 if (!document.hidden) {
                     window.location.href = webFallbackUrl;
                 }

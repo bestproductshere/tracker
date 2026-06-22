@@ -20,7 +20,7 @@
         }
         .loader {
             border: 4px solid #f3f3f3;
-            border-top: 4px solid #007aff; /* Mobile Browser Blue */
+            border-top: 4px solid #007aff; 
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -46,26 +46,30 @@
 <body>
 
     <div class="loader"></div>
-    <h2>Opening External Browser...</h2>
+    <h2>Opening Link...</h2>
     <p>Please click "Continue" or "Open" if your browser prompts you.</p>
     
     <a id="app-link" href="intent://goli.com/pages/goli-bundles?discount_code=blooming#Intent;scheme=https;package=com.android.chrome;end;" class="btn">Open Link</a>
 
     <script>
         (function() {
-            // Android intent syntax instructs the mobile OS to launch the specified browser package directly
-            var browserAppUrl = "intent://goli.com/pages/goli-bundles?discount_code=blooming#Intent;scheme=https;package=com.android.chrome;end;";
-            var webFallbackUrl = "https://goli.com/pages/goli-bundles?discount_code=blooming";
+            var targetUrl = "https://goli.com/pages/goli-bundles?discount_code=blooming";
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-            // Attempt to trigger the browser's native app prompt immediately on load
-            window.location.href = browserAppUrl;
+            // Android check: Force the native browser application prompt instantly
+            if (/android/i.test(userAgent)) {
+                var androidIntent = "intent://goli.com/pages/goli-bundles?discount_code=blooming#Intent;scheme=https;package=com.android.chrome;end;";
+                window.location.href = androidIntent;
+            } else {
+                // iOS / Standard check: Attempt instant redirection
+                window.location.href = targetUrl;
+            }
 
-            // Fallback safety: If the user stays on this page (meaning the intent is not supported, 
-            // or they clicked 'Cancel'), redirect them to the regular website after 2.5 seconds.
+            // Fallback safety: If the system prompt is canceled or ignored, 
+            // redirect via the standard web path after 2.5 seconds.
             setTimeout(function() {
-                // Check if the user is still looking at this page
                 if (!document.hidden) {
-                    window.location.href = webFallbackUrl;
+                    window.location.href = targetUrl;
                 }
             }, 2500);
         })();
